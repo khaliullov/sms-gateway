@@ -32,6 +32,8 @@ services:
     restart: always
     volumes:
       - gammu_mysql:/var/lib/mysql
+    ports:
+      - ${MYSQL_PORT}:3306
     environment:
       - MARIADB_USER=${MYSQL_USERNAME}
       - MARIADB_PASSWORD=${MYSQL_PASSWORD}
