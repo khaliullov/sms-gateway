@@ -1,7 +1,7 @@
 import os
 
 # Environment config
-port = os.environ.get("SERVER_PORT", "5000")
+port = os.environ.get("SERVER_PORT", "8000")
 ip = os.environ.get("SERVER_IP", "0.0.0.0")
 security = os.environ.get("API_SECURITY", "None")
 

@@ -30,8 +30,10 @@ debuglevel = ${GAMMU_DEBUG_LEVEL}
 
 EOL
 
-# Delay start gammu-smsd
-sleep 5s && /usr/bin/gammu-smsd --pid=/var/run/gammu-smsd.pid --config $GAMMU_SMSD_CONF --daemon &
+if [ "${START_GAMMU}" -ne "0" ]; then
+  # Delay start gammu-smsd
+  sleep 5s && /usr/bin/gammu-smsd --pid=/var/run/gammu-smsd.pid --config $GAMMU_SMSD_CONF --daemon &
+fi
 
 # Start backend
 python3 ./main.py

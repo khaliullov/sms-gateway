@@ -1,5 +1,8 @@
 .env
+.idea
+.vagrant
 gammu-smsdrc-win
 mysql.sql
 syslog
 Pipfile
+*.pyc

@@ -1,8 +1,7 @@
 from waitress import serve
 from flask import Flask
-from flask_restx import Api, Resource, fields
+from flask_restx import Api, Resource, fields, apidoc
 from flask_jwt_extended import (JWTManager)
-from flask_basicauth import BasicAuth
 
 import os
 import logging
@@ -13,10 +12,19 @@ from environment.instance import jwt_config
 from environment.instance import database_config
 from database.instance import init_db
 
+
+class MyApi(Api):
+    def _register_apidoc(self, app):
+        conf = app.extensions.setdefault("restx", {})
+        if not conf.get("apidoc_registered", False):
+            apidoc.apidoc._static_url_path = app.config['API_PREFIX'] + 'swaggerui'
+            app.register_blueprint(apidoc.apidoc)
+        conf["apidoc_registered"] = True
+
+
 class Server(object):
-    
+
     def __init__(self):
-        
         self.app = Flask(__name__)
         self.app.name = "backend"
 
@@ -38,6 +46,9 @@ class Server(object):
         self.app.config['BASIC_AUTH_USERNAME'] = os.environ.get("API_USERNAME", "admin")
         self.app.config['BASIC_AUTH_PASSWORD'] = os.environ.get("API_PASSWORD", "admin")
 
+        # prefix
+        self.app.config['API_PREFIX'] = os.environ.get("API_PREFIX", "/")
+
         authorizations = {
             'Bearer': {
                 'type': 'apiKey',
@@ -52,21 +63,22 @@ class Server(object):
             }
         }
 
-        self.api = Api(self.app, 
-            version='1.0.9', 
-            title='SMS Gateway',
-            description='This REST API allow you to send and receive SMS', 
-            doc = environment_config["swagger-url"],
-            authorizations=authorizations,
-            security=environment_config["security"]
-        )
-        
+        #with mock.patch('flask_restx.Api._register_apidoc', _register_apidoc):
+        self.api = MyApi(self.app,
+                         version='1.0.9',
+                         title='SMS Gateway',
+                         description='This REST API allow you to send and receive SMS',
+                         doc=os.environ.get("API_PREFIX", "/"),
+                         authorizations=authorizations,
+                         security=environment_config["security"],
+                         prefix=self.app.config['API_PREFIX']
+                         )
+
         self.jwt = JWTManager(self.app)
 
     def run(self):
-        
         init_db()
-        
+
         logger = logging.getLogger('waitress')
         logger.setLevel(logging.INFO)
         logger = logging.getLogger('backend')
@@ -77,5 +89,6 @@ class Server(object):
             host=environment_config["ip"],
             port=environment_config["port"]
         )
+
 
 server = Server()

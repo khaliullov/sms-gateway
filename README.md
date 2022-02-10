@@ -36,7 +36,7 @@ services:
     image: fizcko/sms-gateway
     restart: always
     ports:
-      - 5000:5000
+      - 8000:8000
     devices:
       - "/dev/ttyUSB2:/dev/ttyUSB2"
     depends_on:
@@ -73,7 +73,7 @@ $ docker-compose up -d
     description     : Bind to a specific interface
 
 #### SERVER_PORT
-    default value   : "5000"
+    default value   : "8000"
     description     : Define server port for backend API
 
 #### GAMMU_SMSD_CONF

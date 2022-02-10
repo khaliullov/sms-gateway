@@ -16,7 +16,7 @@ def log_request(response):
 
     if (
         request.path == "/favicon.ico"
-        or request.path.startswith("/swaggerui")
+        or request.path.startswith(app.config['API_PREFIX']+"swaggerui")
     ):
         return response
 

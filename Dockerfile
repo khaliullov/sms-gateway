@@ -5,10 +5,10 @@ ENV TERM xterm
 
 WORKDIR /opt/sms_gateway
 
-RUN mkdir -p /opt/sms_gateway 
+RUN mkdir -p /opt/sms_gateway
 
 ENV SERVER_IP "0.0.0.0"
-ENV SERVER_PORT "5000"
+ENV SERVER_PORT "8000"
 
 ENV GAMMU_SMSD_CONF "/etc/gammu-smsdrc"
 ENV GAMMU_DEVICE "/dev/ttyUSB0"
@@ -28,6 +28,7 @@ ENV JWT_ACCESS_TOKEN_EXPIRES "900"
 ENV API_SECURITY "None"
 ENV API_USERNAME "admin"
 ENV API_PASSWORD "admin"
+ENV API_PREFIX "/"
 
 RUN apt-get update \
 	&& apt-get install -y \
@@ -38,7 +39,7 @@ RUN apt-get update \
 		libgammu-dev=1.40.0-1 \
 		libmariadb-dev \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* 
+	&& rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /usr/local/bin/
 COPY src/ /opt/sms_gateway/

@@ -1,26 +1,42 @@
 version: '3.3'
 services:
-  backend:
-    image: fizcko/sms-gateway:latest
+  gammu-backend:
+    image: leandr/sms-gateway:latest
     restart: always
     ports:
-      - 5000:5000
-    devices:
-      - "/dev/ttyUSB2:/dev/ttyUSB2"
+      - ${EXPOSED_PORT}:8000
     depends_on:
-      - "db"
+      - "gammu-db"
     environment:
-      MYSQL_HOST: db
-      MYSQL_USERNAME: root
-      MYSQL_PASSWORD: 88qpRR87pa78fff
-      MYSQL_DATABASE: smsd
-      GAMMU_DEVICE: /dev/ttyUSB2
-  db:
+      - SERVER_PORT=${SERVER_PORT}
+      - SERVER_IP=${SERVER_IP}
+      - API_SECURITY=${API_SECURITY}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_ACCESS_TOKEN_EXPIRES=${JWT_ACCESS_TOKEN_EXPIRES}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USERNAME=${MYSQL_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - GAMMU_SMSD_CONF=${GAMMU_SMSD_CONF}
+      - GAMMU_DEVICE=${GAMMU_DEVICE}
+      - GAMMU_DEVICE_CONNECTION=${GAMMU_DEVICE_CONNECTION}
+      - GAMMU_PIN=${GAMMU_PIN}
+      - GAMMU_DEBUG_LEVEL=${GAMMU_DEBUG_LEVEL}
+      - START_GAMMU=${START_GAMMU}
+      - API_USERNAME=${API_USERNAME}
+      - API_PASSWORD=${API_PASSWORD}
+      - API_PREFIX=${API_PREFIX}
+  gammu-db:
     image: webhippie/mariadb
     restart: always
     volumes:
-      - /opt/mariadb:/var/lib/mysql
+      - gammu_mysql:/var/lib/mysql
     environment:
-      MARIADB_ROOT_PASSWORD: 88qpRR87pa78fff
-      MARIADB_DATABASE: smsd
+      - MARIADB_USER=${MYSQL_USERNAME}
+      - MARIADB_PASSWORD=${MYSQL_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MARIADB_DATABASE=${MYSQL_DATABASE}
 
+volumes:
+  gammu_mysql:
